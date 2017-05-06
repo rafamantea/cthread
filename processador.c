@@ -28,6 +28,7 @@
 
 #include "include/cdata.h"
 #include "include/support.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 /*int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
@@ -54,37 +55,14 @@
     }
 }*/
 
-int adicionarNaFila(PFILA2 fila, TCB_t* tcb) {
+int criarProcesso(PFILA2 aptos, TCB_t* tcb) {
 
 	PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
 	pnodo->node = tcb;
 
-	/*
-	*	Como um novo processo é colocado na fila de aptos? Isso depende do escalonador 
-	*/
-	return AppendFila2(fila, pnodo);
+	adicionarNaFilaAptos(aptos, pnodo);
+
 }
-
-/*int adicionarNaFilaAptos(PFILA2* aptos, int* tamanho_aptos, TCB_t* tcb) {
-	adicionarNaFila(aptos, tamanho_aptos, tcb);
-	tcb->state = PROCST_APTO;
-}*/
-
-
-int adicionarNaFilaAptos(PFILA2 aptos, TCB_t* tcb) {
-	tcb->state = PROCST_APTO;
-	return adicionarNaFila(aptos, tcb);
-}
-
-/*int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
-	adicionarNaFila(bloqueados, tamanho_bloqueados, tcb);
-	tcb->state = PROCST_BLOQ;
-}
-
-int adicionarNaFilaExecutando(PFILA2* executando, int* tamanho_executando, TCB_t* tcb) {
-	adicionarNaFila(executando, tamanho_executando, tcb);
-	tcb->state = PROCST_EXEC;
-}*/
 
 TCB_t* criarTCB(int tid) {
 	TCB_t* tcb = malloc(sizeof(TCB_t));
@@ -92,4 +70,44 @@ TCB_t* criarTCB(int tid) {
     tcb->state = PROCST_CRIACAO;
 	
 	return tcb;
+}
+
+int adicionarNaFila(PFILA2 fila, PNODE2 pnodo) {
+
+	//PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
+	//pnodo->node = tcb;
+
+	/*
+	*	Como um novo processo é colocado na fila de aptos? Isso depende do escalonador 
+	*/
+	return AppendFila2(fila, pnodo);
+}
+
+int adicionarNaFilaAptos(PFILA2 aptos, PNODE2 pnodo) {
+	((TCB_t*)(pnodo->node))->state = PROCST_APTO;
+	return adicionarNaFila(aptos, pnodo);
+}
+
+/*int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
+	adicionarNaFila(bloqueados, tamanho_bloqueados, tcb);
+	tcb->state = PROCST_BLOQ;
+}
+*/
+int adicionarNaFilaExecutando(PFILA2 executando, PNODE2 pnodo) {
+	((TCB_t*)(pnodo->node))->state = PROCST_EXEC;
+	return adicionarNaFila(executando, pnodo);
+}
+
+int apto_to_executar(PFILA2 apto, PFILA2 executando) {
+	FirstFila2(apto); // iterador no inicio da fila
+	PNODE2 pnodo = GetAtIteratorFila2(apto);
+	if( DeleteAtIteratorFila2(apto) ) {
+		printf("Nao conseguiu retirar elemento da fila de aptos\n");
+		return 1; // erro
+	}
+	if ( adicionarNaFilaExecutando(executando, pnodo)) {
+		printf("Erro ao inserir em executando\n");
+		return 1;
+	}
+	return 0;
 }

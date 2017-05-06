@@ -5,7 +5,7 @@
 #include "include/support.h"
 #include "include/cdata.h"
 
-#define NUM_MAX_PROCESSOS 	30
+#define NUM_MAX_PROCESSOS 	10
 
 #define CRIAR_PROCESSO 		0
 #define	APTO_TO_EXECUTAR	1
@@ -14,7 +14,9 @@
 #define	EXECUTAR_TO_APTO	4
 #define	BLOQUEADO_TO_APTO	5
 
-void imprimir(int i, int r, int a, int e, int b, int t);
+
+
+void imprimir(int i, int r, int a, int e, int b, int t, char frase[]);
 /*
 *	i: iteração
 *	r: resto
@@ -73,12 +75,14 @@ int main(){
 	}
 	printf("Fila bloqueado criada\n\n");
 
+	char *frase;
+	char frase1[] = "Criar processo e inserir em apto";
+	char frase2[] = "De apto para executando";
 
 	int iteracao = 1; // i
 	int r=0, a=0, e=0, b=0, t=0; 
 	int flag_acao = -1;
-	int process_id = 1;
-	
+	int process_id = 1;	
 	int terminar_execucao = 0; // TRUE or FALSE
 
 	if (iteracao > NUM_MAX_PROCESSOS) // Quando terminar *versão para teste*
@@ -98,21 +102,26 @@ int main(){
 				TCB_t* tcb = (TCB_t*)criarTCB(process_id); // criar processo
 				process_id++;
 				// inserir na fila de apto
-				if( adicionarNaFilaAptos(iterador_apto, tcb) ) {
+				if( criarProcesso(iterador_apto, tcb) ) {
 					printf("Erro ao inserir elemento na fila de aptos\n");
 					return 0;
 				}
 				a++;	// mais um elemento em aptos
+				frase = frase1;
 			}
 		}
 
-		//else if(flag_acao == APTO_TO_EXECUTAR){
-		//	if() { // ver se fila está vazia
-				/*
-				*	CHAMAR FUNÇÃO DO PROCESSADOR
-				*/
-		//	}
-		//}
+		else if(flag_acao == APTO_TO_EXECUTAR){
+			if(e == 0 && a > 0) { // ver se fila está vazia
+				if( apto_to_executar(iterador_apto, iterador_executando) ) {
+					printf("Erro ao retirar de apto e inserir em executando\n");
+					return 0;
+				}
+				e++;
+				a--;
+				frase = frase2;
+			}
+		}
 
 		//else if(flag_acao == TERMINA_PROCESSO){
 		//	if() {
@@ -127,17 +136,18 @@ int main(){
 		*/
 
 
-		imprimir(iteracao, r, a, e, b, t);	// Imprimir os valores da execução
+		imprimir(iteracao, r, a, e, b, t, frase);	// Imprimir os valores da execução
 
+		frase = NULL;
 		iteracao++;
 
-		if (process_id >= NUM_MAX_PROCESSOS) // Quando terminar *versão para teste*
+		if (process_id > NUM_MAX_PROCESSOS) // Quando terminar *versão para teste*
 			terminar_execucao = 1;
 	}
 }
 
-void imprimir(int i, int r, int a, int e, int b, int t){
-	printf("iteracao %d:	resto: %d	acao: NOME_ACAO\n", i, r);
+void imprimir(int i, int r, int a, int e, int b, int t, char frase[]){
+	printf("iteracao %d:	resto: %d	acao: %s\n", i, r, frase);
 	printf("	Elementos em apto: %d\n", a);
 	printf("	Elementos em executando: %d\n", e);
 	printf("	Elementos em bloqueado: %d\n", b);
