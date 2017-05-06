@@ -1,4 +1,5 @@
 
+
 CC=gcc
 
 all: objetos executavel
@@ -19,6 +20,5 @@ delete_barulho:
 	rm *~
 
 clean: delete_objetos delete_executavel delete_barulho
-
 
 

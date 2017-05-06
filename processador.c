@@ -1,24 +1,36 @@
-#include "include/cdata.h"
-#include "include/support.h"
-
 /*
 * 	Implementação das funções da máquina de estados que representa o processador.
 */
 
+// função para definir evento
 
-/* 
-Função genérica para adicionar um elemento TCB na fila.
+// funções para cada evento
 
-@params
-	# fila: ponteiro para a fila.
-	# tamanho_fila: ponteiro para o tamanho da fila.
-	# tcb: ponteiro para o elemento TCB a ser adicionado na fila.
-
-@return
-	# -1: erro.
-	# caso contrário: elemento inserido com sucesso.
+/*
+*	CASO 0 e 6: 	Alocar espaço para um novo TCB e inserir na fila de aptos.
+*
+*	CASO 1 e 7:  	Retirar um elemento TCB da fila de apto e inserir na fila de executando
+*					se a fila de executando estiver vazia, caso contrário, nada deverá acontecer.
+*
+*	CASO 2 e 8:		Retirar o elemento TCB da fila de executando e liberar o espaço alocado pelo elemento TCB
+*					(simula o término de uma thread). Se a fila de executando estiver vazia, nada deve ser feito. 
+*
+*	CASO 3 e 9:		Retirar o elemento TCB da fila de executando e inserir na fila de bloqueado (simula uma
+*					thread sendo bloqueada). Se a fila de executando estiver vazia, nada deve ser feito.
+*
+*	CASO 4 e 10:	Retirar o elemento TCB da fila de executando e inserir na fila de apto (simula a cedência
+*					voluntária do processador). Se a fila de executando estiver vazia, nada deve ser feito. 
+*
+*	CASO 5 e 11:	Retirar um elemento da fila de bloqueado e inserir na fila de apto. Se a fila de 
+*					bloqueado estiver vazia, nada deverá ser feito.
+*
 */
-int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
+
+#include "include/cdata.h"
+#include "include/support.h"
+#include <stdlib.h>
+
+/*int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
 	
     if (fila == NULL){
         fila = malloc(sizeof(TCB_t));
@@ -40,14 +52,31 @@ int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
 		
         return AppendFila2(fila, tcb);
     }
+}*/
+
+int adicionarNaFila(PFILA2 fila, TCB_t* tcb) {
+
+	PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
+	pnodo->node = tcb;
+
+	/*
+	*	Como um novo processo é colocado na fila de aptos? Isso depende do escalonador 
+	*/
+	return AppendFila2(fila, pnodo);
 }
 
-int adicionarNaFilaAptos(PFILA2* aptos, int* tamanho_aptos, TCB_t* tcb) {
+/*int adicionarNaFilaAptos(PFILA2* aptos, int* tamanho_aptos, TCB_t* tcb) {
 	adicionarNaFila(aptos, tamanho_aptos, tcb);
 	tcb->state = PROCST_APTO;
+}*/
+
+
+int adicionarNaFilaAptos(PFILA2 aptos, TCB_t* tcb) {
+	tcb->state = PROCST_APTO;
+	return adicionarNaFila(aptos, tcb);
 }
 
-int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
+/*int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
 	adicionarNaFila(bloqueados, tamanho_bloqueados, tcb);
 	tcb->state = PROCST_BLOQ;
 }
@@ -55,7 +84,7 @@ int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t
 int adicionarNaFilaExecutando(PFILA2* executando, int* tamanho_executando, TCB_t* tcb) {
 	adicionarNaFila(executando, tamanho_executando, tcb);
 	tcb->state = PROCST_EXEC;
-}
+}*/
 
 TCB_t* criarTCB(int tid) {
 	TCB_t* tcb = malloc(sizeof(TCB_t));
