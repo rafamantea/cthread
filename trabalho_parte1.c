@@ -22,8 +22,8 @@ void imprimir(int i, int r, int a, int e, int b, int t);
 *	t: elementos terminados
 */
 
-// function that handles the remainder
-int handleRemainder(int remainder);
+// Função que gerencia o resto
+int gerenciarResto(int remainder);
 /*
 *	0: 
 *	1:
@@ -103,7 +103,7 @@ void imprimir(int i, int r, int a, int e, int b, int t){
 	printf("\n");
 }
 
-int handleRemainder(int remainder) {
+int gerenciarResto(int remainder) {
 
 	if(n == 6 || n == 0) {
 		return CRIAR_PROCESSO;

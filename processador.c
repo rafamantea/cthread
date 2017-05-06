@@ -1,31 +1,67 @@
+#include "include/cdata.h"
+#include "include/support.h"
+
 /*
 * 	Implementação das funções da máquina de estados que representa o processador.
 */
 
-// função para definir evento
 
-// funções para cada evento
+/* 
+Função genérica para adicionar um elemento TCB na fila.
 
-/*
-*	CASO 0 e 6: 	Alocar espaço para um novo TCB e inserir na fila de aptos.
-*
-*	CASO 1 e 7:  	Retirar um elemento TCB da fila de apto e inserir na fila de executando
-*					se a fila de executando estiver vazia, caso contrário, nada deverá acontecer.
-*
-*	CASO 2 e 8:		Retirar o elemento TCB da fila de executando e liberar o espaço alocado pelo elemento TCB
-*					(simula o término de uma thread). Se a fila de executando estiver vazia, nada deve ser feito. 
-*
-*	CASO 3 e 9:		Retirar o elemento TCB da fila de executando e inserir na fila de bloqueado (simula uma
-*					thread sendo bloqueada). Se a fila de executando estiver vazia, nada deve ser feito.
-*
-*	CASO 4 e 10:	Retirar o elemento TCB da fila de executando e inserir na fila de apto (simula a cedência
-*					voluntária do processador). Se a fila de executando estiver vazia, nada deve ser feito. 
-*
-*	CASO 5 e 11:	Retirar um elemento da fila de bloqueado e inserir na fila de apto. Se a fila de 
-*					bloqueado estiver vazia, nada deverá ser feito.
-*
+@params
+	# fila: ponteiro para a fila.
+	# tamanho_fila: ponteiro para o tamanho da fila.
+	# tcb: ponteiro para o elemento TCB a ser adicionado na fila.
+
+@return
+	# -1: erro.
+	# caso contrário: elemento inserido com sucesso.
 */
+int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
+	
+    if (fila == NULL){
+        fila = malloc(sizeof(TCB_t));
+        tamanho_fila++;
 
-//#include "include/cdata.h"
+        int inicializar_fila = CreateFila2(fila);
+		
+        if (inicializar_fila == -1){
+            perror("Erro ao inicializar fila!\n");
+			
+			return -1;
+        }
+		
+        return AppendFila2(fila, tcb);
+    }
+    else{
+        fila = realloc(fila, sizeof(TCB_t)*(tamanho_fila+1));
+        tamanho_fila++;
+		
+        return AppendFila2(fila, tcb);
+    }
+}
 
+int adicionarNaFilaAptos(PFILA2* aptos, int* tamanho_aptos, TCB_t* tcb) {
+	adicionarNaFila(aptos, tamanho_aptos, tcb);
+	tcb->state = PROCST_APTO;
+}
 
+int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
+	adicionarNaFila(bloqueados, tamanho_bloqueados, tcb);
+	tcb->state = PROCST_BLOQ;
+}
+
+int adicionarNaFilaExecutando(PFILA2* executando, int* tamanho_executando, TCB_t* tcb) {
+	adicionarNaFila(executando, tamanho_executando, tcb);
+	tcb->state = PROCST_EXEC;
+}
+
+TCB_t* criarTCB(int tid) {
+	TCB_t* tcb = malloc(sizeof(TCB_t));
+    tcb->tid = tid;	
+    tcb->state = PROCST_CRIACAO;
+    tcb->context = current_context;
+	
+	return tcb;
+}
