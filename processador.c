@@ -61,7 +61,6 @@ TCB_t* criarTCB(int tid) {
 	TCB_t* tcb = malloc(sizeof(TCB_t));
     tcb->tid = tid;	
     tcb->state = PROCST_CRIACAO;
-    tcb->context = current_context;
 	
 	return tcb;
 }
