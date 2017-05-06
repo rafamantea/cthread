@@ -5,7 +5,7 @@
 #include "include/support.h"
 #include "include/cdata.h"
 
-#define NUM_MAX_PROCESSOS 	10
+#define NUM_MAX_PROCESSOS 	3
 
 #define CRIAR_PROCESSO 		0
 #define	APTO_TO_EXECUTAR	1
@@ -76,10 +76,14 @@ int main(){
 	printf("Fila bloqueado criada\n\n");
 
 	char *frase;
-	char frase1[] = "Criar processo e inserir em apto";
-	char frase2[] = "De apto para executando";
+	char fraseGeral[] = "Nenhum evento";
+	char frase0[] = "Criar processo e inserir em apto";
+	char frase1[] = "De apto para executando";
+	char frase2[] = "Terminar execucao de processo";
 
-	int iteracao = 1; // i
+	frase = fraseGeral;
+
+	int iteracao = 1; 
 	int r=0, a=0, e=0, b=0, t=0; 
 	int flag_acao = -1;
 	int process_id = 1;	
@@ -107,29 +111,31 @@ int main(){
 					return 0;
 				}
 				a++;	// mais um elemento em aptos
-				frase = frase1;
+				frase = frase0;
 			}
 		}
 
 		else if(flag_acao == APTO_TO_EXECUTAR){
-			if(e == 0 && a > 0) { // ver se fila está vazia
+			if(e == 0 && a > 0) { // executando esta livre e fila apto está vazia
 				if( apto_to_executar(iterador_apto, iterador_executando) ) {
 					printf("Erro ao retirar de apto e inserir em executando\n");
 					return 0;
 				}
 				e++;
 				a--;
-				frase = frase2;
+				frase = frase1;
 			}
 		}
 
-		//else if(flag_acao == TERMINA_PROCESSO){
-		//	if() {
-				/*
-
-				*/
-		//	}	
-		//}
+		else if(flag_acao == TERMINA_PROCESSO){
+			if( e > 0) { // há processo executando
+				if ( libera_executando(iterador_executando) ) {
+					printf("Erro ao retirar elementos da fila de executando\n");
+				}
+				e--;
+				frase = frase2;
+			}
+		}
 
 		/*
 		*	COLOCAR AS OUTRAS CONDIÇÕES.
@@ -138,10 +144,10 @@ int main(){
 
 		imprimir(iteracao, r, a, e, b, t, frase);	// Imprimir os valores da execução
 
-		frase = NULL;
+		frase = fraseGeral;
 		iteracao++;
 
-		if (process_id > NUM_MAX_PROCESSOS) // Quando terminar *versão para teste*
+		if ( process_id > NUM_MAX_PROCESSOS && (a==0) && (e==0) && (b==0) ) // Quando terminar *versão para teste*
 			terminar_execucao = 1;
 	}
 }

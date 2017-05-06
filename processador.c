@@ -101,6 +101,7 @@ int adicionarNaFilaExecutando(PFILA2 executando, PNODE2 pnodo) {
 int apto_to_executar(PFILA2 apto, PFILA2 executando) {
 	FirstFila2(apto); // iterador no inicio da fila
 	PNODE2 pnodo = GetAtIteratorFila2(apto);
+	
 	if( DeleteAtIteratorFila2(apto) ) {
 		printf("Nao conseguiu retirar elemento da fila de aptos\n");
 		return 1; // erro
@@ -108,6 +109,15 @@ int apto_to_executar(PFILA2 apto, PFILA2 executando) {
 	if ( adicionarNaFilaExecutando(executando, pnodo)) {
 		printf("Erro ao inserir em executando\n");
 		return 1;
+	}
+	return 0;
+}
+
+int libera_executando(PFILA2 executando) {
+	FirstFila2(executando); // iterador no inicio da fila (só pra garantir)
+	if( DeleteAtIteratorFila2(executando) ) {
+		printf("Nao conseguiu retirar elemento da fila de executando\n");
+		return 1; // erro
 	}
 	return 0;
 }

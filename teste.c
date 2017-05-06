@@ -22,25 +22,36 @@ int main(){
 
 	// Cria fila do iterador
 	FILA2 fila1_APTO;
+	FILA2 fila1_EXECUTANDO;
+
+
 	PFILA2 iterador1_APTO;
+	PFILA2 iterador1_EXECUTANDO;
+
 	iterador1_APTO = &fila1_APTO;
+	iterador1_EXECUTANDO = &fila1_EXECUTANDO;
 
 	if( CreateFila2( iterador1_APTO ) ) {
 		printf("Erro ao criar sFila2\n");
 		return 0;
 	}
 
-	printf("\n\nsFila2 criada com sucesso\n\n");
+	if( CreateFila2( iterador1_EXECUTANDO ) ) {
+		printf("Erro ao criar sFila2\n");
+		return 0;
+	}
+
+	printf("\n\nsFila2s criada com sucesso\n\n");
 
 
 	// criar tcb
 	TCB_t* tcb = criarTCB(456);
 
-	//NODE2 nodo1;
+	NODE2 nodo1;
 
-	//nodo1.node = tcb;
+	nodo1.node = tcb;
 
-	printf("%d\n", adicionarNaFilaAptos(iterador1_APTO, tcb));
+	printf("%d\n", adicionarNaFilaAptos(iterador1_APTO, &nodo1));
 
 	// colocar no primeiro elemento
 	FirstFila2(iterador1_APTO);
@@ -49,6 +60,27 @@ int main(){
 	recebedor = GetAtIteratorFila2(iterador1_APTO);
 
 	printf("%d\n\n", ((TCB_t*)(recebedor->node))->tid);
+
+	apto_to_executar(iterador1_APTO, iterador1_EXECUTANDO);
+
+	FirstFila2(iterador1_EXECUTANDO);
+	recebedor = GetAtIteratorFila2(iterador1_EXECUTANDO);
+	printf("%d\n\n", ((TCB_t*)(recebedor->node))->tid);
+
+	libera_executando(iterador1_EXECUTANDO);
+
+
+
+
+
+
+
+
+
+
+
+	//PNODE2 recebedor;
+	//recebedor = GetAtIteratorFila2(iterador1_APTO);
 
 
 	// Cria três estruturas
