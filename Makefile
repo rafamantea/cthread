@@ -1,6 +1,5 @@
 
-
-cc=gcc
+CC=gcc
 
 all: objetos executavel
 
@@ -10,8 +9,6 @@ objetos:
 executavel:
 	$(CC) bin/support.o processador.o trabalho_parte1.o
 
-clean: delete_objetos delete_executavel delete_barulho
-
 delete_objetos:
 	rm *.o
 
@@ -20,3 +17,8 @@ delete_executavel:
 
 delete_barulho:
 	rm *~
+
+clean: delete_objetos delete_executavel delete_barulho
+
+
+

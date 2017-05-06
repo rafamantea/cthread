@@ -28,30 +28,4 @@
 
 //#include "include/cdata.h"
 
-void handleRandomNumber(int number) {
-	int n = (number % 12);
-	if(n == 6 || n == 0) {
-		//Criar elemento TCB
-		//Inserir na fila APTO
-	} else if(n == 1 || n == 7) {
-		//IF filaDeApto == 'vazia'
-			//Retirar um elemento TCB da fila de APTO
-			//Inserir na fila EXECUTANDO
-	} else if(n == 2 || n == 8) {
-		//IF filaExecutando != 'vaiza'
-			//Retirar o elemento TCB da fila EXECUTANDO
-			//Liberar espaço alocado pelo elemento TCB
-	} else if(n == 3 || n == 9) {
-		//IF filaExecutando != 'vazia'
-			//Retirar o elemento TCB da fila EXECUTANDO
-			//Inserir na fila BLOQUEADO
-	} else if(n == 4 || n == 10) {
-		//IF filaExecutando != 'vazia'
-			//Retirar o elemento TCB da fila EXECUTANDO
-			//Inserir na fila APTO
-	} else if(n == 5 || n == 11) {
-		//IF filaBloqueado != 'vazia'
-			//Retirar um elemento da fila BLOQUEADO
-			//Inserir na fila de APTO
-	}
-}
+
