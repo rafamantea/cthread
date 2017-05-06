@@ -3,8 +3,6 @@
 */
 #include <stdio.h>
 #include "include/support.h"
-#include "include/cdata.h"
-
 #define NUM_MAX_PROCESSOS 	10
 
 #define CRIAR_PROCESSO 		0
@@ -24,8 +22,8 @@ void imprimir(int i, int r, int a, int e, int b, int t);
 *	t: elementos terminados
 */
 
-// function that handles the remainder
-int handleRemainder(int remainder);
+// Função que gerencia o resto
+int gerenciarResto(int remainder);
 /*
 *	0: 
 *	1:
@@ -39,35 +37,9 @@ int handleRemainder(int remainder);
 
 int main(){
 
-	// Declaracao das filas e dos iteradores de filas
-	FILA2 apto;
-	FILA2 executando;
-	FILA2 bloqueado;
-
-	PFILA2 iterador_apto;
-	PFILA2 iterador_executando;
-	PFILA2 iterador_bloqueado;
-
-	// Atribuir enderecos aos ponteiros
-	iterador_apto = &apto;
-	iterador_executando = &executando;
-	iterador_bloqueado = &bloqueado;
-
-	// Criar as filas
-	if( CreateFila2( iterador1_apto ) ) {
-		printf("Erro ao criar sFila2 'apto'\n");
-		return 0;
-	}
-	if( CreateFila2( iterador1_executando ) ) {
-		printf("Erro ao criar sFila2 'executando'\n");
-		return 0;
-	}
-	if( CreateFila2( iterador1_bloqueado ) ) {
-		printf("Erro ao criar sFila2 'bloqueado'\n");
-		return 0;
-	}
-
-
+	/*	Alocar espaço para as filas 'apto', 'executanto', 'bloqueado'. 
+	*	USANDO SUPPORT.O
+	*/
 	int r=0, a=0, e=0, b=0, t=0;
 	int flag_acao = 0, num_processos;
 	int iteracao = 1;
@@ -131,7 +103,7 @@ void imprimir(int i, int r, int a, int e, int b, int t){
 	printf("\n");
 }
 
-int handleRemainder(int remainder) {
+int gerenciarResto(int remainder) {
 
 	if(n == 6 || n == 0) {
 		return CRIAR_PROCESSO;
