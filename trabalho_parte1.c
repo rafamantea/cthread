@@ -1,4 +1,4 @@
-/*
+/*	07/05/2017
 * 	Arquivo referente a primeira parte do trabalho.
 */
 #include <stdio.h>
@@ -15,28 +15,10 @@
 #define	EXECUTANDO_TO_APTO	4
 #define	BLOQUEADO_TO_APTO	5
 
-
 void imprimir(int i, int r, int a, int e, int b, int t, char frase[]);
-/*
-*	i: iteração
-*	r: resto
-*	a: elementos em apto
-*	e: elementos em executando
-*	b: elementos em bloqueado
-*	t: elementos terminados
-*/
 
 // function that handles the remainder
 int handleRemainder(int remainder);
-/*
-*	0: 
-*	1:
-*	2:
-*	3:
-*	4:
-*	5:
-*	6:
-*/
 
 int main(){
 
@@ -56,25 +38,19 @@ int main(){
 
 	// Criar as filas
 	if( CreateFila2( iterador_apto ) ) {
-		printf("Erro ao criar sFila2 'apto'\n");
+		printf("Erro ao criar sFila2 apto\n");
 		return 0;
 	}
-
-	printf("\n\nFila de apto criada\n\n");
-
 	if( CreateFila2( iterador_executando ) ) {
-		printf("Erro ao criar sFila2 'executando'\n");
+		printf("Erro ao criar sFila2 executando\n");
 		return 0;
-	}
-	printf("Fila executando criada\n\n");
-	
+	}	
 	if( CreateFila2( iterador_bloqueado ) ) {
-		printf("Erro ao criar sFila2 'bloqueado'\n");
+		printf("Erro ao criar sFila2 bloqueado\n");
 		return 0;
 	}
-	printf("Fila bloqueado criada\n\n");
 
-	char *frase;
+	// frases usadas na saída
 	char fraseGeral[] = "Nenhum evento";
 	char frase0[] = "criacao de um elemento TCB";
 	char frase1[] = "de apto para executando";
@@ -82,25 +58,23 @@ int main(){
 	char frase3[] = "de executando para bloqueado";
 	char frase4[] = "de executando para apto";
 	char frase5[] = "de bloqueado para apto";
-
+	char *frase;
 	frase = fraseGeral;
 
+	// variaveis auxiliares para a parte1 do trabalho
 	int iteracao = 1; 
 	int r=0, a=0, e=0, b=0, t=0; 
 	int flag_acao = -1;
-	int process_id = 1;	
-	int terminar_execucao = 0; // TRUE or FALSE
+	int terminar_execucao = 0; // TRUE or FALSE		
 
-	if (iteracao > NUM_MAX_PROCESSOS) // Quando terminar *versão para teste*
-			terminar_execucao = 1;
+	int process_id = 1;	// gerador de id unico para cada TCB
+
+	while( !terminar_execucao ){	// Loop onde tudo acontece (trabalho parte 1)
 		
-	while( !terminar_execucao ){	// Loop onde tudo acontece
-		
-		r = Random2();
+		r = Random2();	// gerar numero aleatorio
 		r = r%12;
 
-		// passar as filas APTO, EXECUTAR, BLOQUEADO
-		flag_acao = handleRemainder(r);
+		flag_acao = handleRemainder(r); // tratar o numero aleatorio
 
 		if (flag_acao == CRIAR_PROCESSO) {
 			if( process_id <= NUM_MAX_PROCESSOS) { // limitar o número máximo de processos pelo ID
@@ -175,20 +149,28 @@ int main(){
 				a++;
 				frase = frase5;
 			}
-		}
-		
+		}		
 
 		imprimir(iteracao, r, a, e, b, t, frase);	// Imprimir os valores da execução
 
 		frase = fraseGeral; // Quando nenhuma opcao eh selecionada
 		iteracao++;
 
-		if ( process_id > NUM_MAX_PROCESSOS && (a==0) && (e==0) && (b==0) ) // Quando terminar *versão para teste*
+		// condicao de parada
+		if ( process_id > NUM_MAX_PROCESSOS && (a==0) && (e==0) && (b==0) ) 
 			terminar_execucao = 1;
 	}
 	return 0;
 }
 
+/*	
+*	i: iteração
+*	r: resto
+*	a: elementos em apto
+*	e: elementos em executando
+*	b: elementos em bloqueado
+*	t: elementos terminados
+*/
 void imprimir(int i, int r, int a, int e, int b, int t, char frase[]){
 	printf("iteracao %d:	resto: %d	acao: %s\n", i, r, frase);
 	printf("	Elementos em apto: %d\n", a);
@@ -198,6 +180,14 @@ void imprimir(int i, int r, int a, int e, int b, int t, char frase[]){
 	printf("\n");
 }
 
+/*
+*	0 or 6: 	criar TCB e colocar em apto (inicio do processo)
+*	1 or 7:		de apto para executando
+*	2 or 8:		terminar processo
+*	3 or 9:		executando to bloqueado
+*	4 or 10:	executando to apto
+*	5 or 11:	bloqueado to apto
+*/
 int handleRemainder(int n) {
 
 	if(n == 6 || n == 0) {

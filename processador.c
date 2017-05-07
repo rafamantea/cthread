@@ -1,10 +1,6 @@
-/*
+/*	07/05/2017
 * 	Implementação das funções da máquina de estados que representa o processador.
 */
-
-// função para definir evento
-
-// funções para cada evento
 
 /*
 *	CASO 0 e 6: 	Alocar espaço para um novo TCB e inserir na fila de aptos.
@@ -53,7 +49,6 @@ TCB_t* criarTCB(int tid) {
 }
 
 int adicionarNaFila(PFILA2 fila, PNODE2 pnodo) {
-
 	return AppendFila2(fila, pnodo);
 }
 
