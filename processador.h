@@ -9,6 +9,13 @@ int adicionarNaFila(PFILA2 fila, PNODE2 pnodo);
 
 int adicionarNaFilaAptos(PFILA2 aptos, PNODE2 pnodo);
 
-int apto_to_executar(PFILA2 apto, PFILA2 executando);
+// esse métodos estão removendo sempre do início da fila.
+int apto_to_executando(PFILA2 apto, PFILA2 executando);
+
+int executando_to_bloqueado(PFILA2 iterador_executando, PFILA2 iterador_bloqueado);
+
+int executando_to_apto(PFILA2 iterador_executando, PFILA2 iterador_apto);
+
+int bloqueado_to_apto(PFILA2 iterador_bloqueado, PFILA2 iterador_apto);
 
 int libera_executando(PFILA2 executando);

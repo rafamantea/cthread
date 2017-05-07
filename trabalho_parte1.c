@@ -4,16 +4,16 @@
 #include <stdio.h>
 #include "include/support.h"
 #include "include/cdata.h"
+#include "processador.h"
 
-#define NUM_MAX_PROCESSOS 	3
+#define NUM_MAX_PROCESSOS 	30
 
 #define CRIAR_PROCESSO 		0
-#define	APTO_TO_EXECUTAR	1
+#define	APTO_TO_EXECUTANDO	1
 #define	TERMINA_PROCESSO	2
-#define	EXECUTAR_TO_BLOQUEADO	3
-#define	EXECUTAR_TO_APTO	4
+#define	EXECUTANDO_TO_BLOQUEADO	3
+#define	EXECUTANDO_TO_APTO	4
 #define	BLOQUEADO_TO_APTO	5
-
 
 
 void imprimir(int i, int r, int a, int e, int b, int t, char frase[]);
@@ -38,7 +38,6 @@ int handleRemainder(int remainder);
 *	6:
 */
 
-
 int main(){
 
 	// Declaracao das filas e dos iteradores de filas
@@ -61,7 +60,7 @@ int main(){
 		return 0;
 	}
 
-	printf("\n\nFila de aptos criada\n\n");
+	printf("\n\nFila de apto criada\n\n");
 
 	if( CreateFila2( iterador_executando ) ) {
 		printf("Erro ao criar sFila2 'executando'\n");
@@ -77,9 +76,12 @@ int main(){
 
 	char *frase;
 	char fraseGeral[] = "Nenhum evento";
-	char frase0[] = "Criar processo e inserir em apto";
-	char frase1[] = "De apto para executando";
-	char frase2[] = "Terminar execucao de processo";
+	char frase0[] = "criacao de um elemento TCB";
+	char frase1[] = "de apto para executando";
+	char frase2[] = "terminar execucao de processo";
+	char frase3[] = "de executando para bloqueado";
+	char frase4[] = "de executando para apto";
+	char frase5[] = "de bloqueado para apto";
 
 	frase = fraseGeral;
 
@@ -108,18 +110,18 @@ int main(){
 				// inserir na fila de apto
 				if( criarProcesso(iterador_apto, tcb) ) {
 					printf("Erro ao inserir elemento na fila de aptos\n");
-					return 0;
+					return 1; // erro
 				}
 				a++;	// mais um elemento em aptos
 				frase = frase0;
 			}
 		}
 
-		else if(flag_acao == APTO_TO_EXECUTAR){
+		else if(flag_acao == APTO_TO_EXECUTANDO){
 			if(e == 0 && a > 0) { // executando esta livre e fila apto está vazia
-				if( apto_to_executar(iterador_apto, iterador_executando) ) {
+				if( apto_to_executando(iterador_apto, iterador_executando) ) {
 					printf("Erro ao retirar de apto e inserir em executando\n");
-					return 0;
+					return 1; // erro
 				}
 				e++;
 				a--;
@@ -131,25 +133,60 @@ int main(){
 			if( e > 0) { // há processo executando
 				if ( libera_executando(iterador_executando) ) {
 					printf("Erro ao retirar elementos da fila de executando\n");
+					return 1; // erro
 				}
 				e--;
+				t++;
 				frase = frase2;
 			}
 		}
 
-		/*
-		*	COLOCAR AS OUTRAS CONDIÇÕES.
-		*/
+		else if(flag_acao == EXECUTANDO_TO_BLOQUEADO) {
+			if( e > 0) {
+				if ( executando_to_bloqueado(iterador_executando, iterador_bloqueado) ) {
+					printf("Erro ao retirar de executando e inserir em bloqueado\n");
+					return 1; // erro
+				}
+				e--;
+				b++;
+				frase = frase3;
+			}
+		}
+		
+		else if(flag_acao == EXECUTANDO_TO_APTO) {
+			if( e > 0) {
+				if ( executando_to_apto(iterador_executando, iterador_apto) ) {
+					printf("Erro ao retirar de executando e inserir em apto\n");
+					return 1; // erro
+				}
+				e--;
+				a++;
+				frase = frase4;
+			}
+		}
 
+		else if(flag_acao == BLOQUEADO_TO_APTO) {
+			if( b > 0) {
+				if ( bloqueado_to_apto(iterador_bloqueado, iterador_apto) ) {
+					printf("Erro ao retirar de bloqueado e inserir em apto\n");
+					return 1; // erro
+				}
+				b--;
+				a++;
+				frase = frase5;
+			}
+		}
+		
 
 		imprimir(iteracao, r, a, e, b, t, frase);	// Imprimir os valores da execução
 
-		frase = fraseGeral;
+		frase = fraseGeral; // Quando nenhuma opcao eh selecionada
 		iteracao++;
 
 		if ( process_id > NUM_MAX_PROCESSOS && (a==0) && (e==0) && (b==0) ) // Quando terminar *versão para teste*
 			terminar_execucao = 1;
 	}
+	return 0;
 }
 
 void imprimir(int i, int r, int a, int e, int b, int t, char frase[]){
@@ -168,7 +205,7 @@ int handleRemainder(int n) {
 		//Criar elemento TCB
 		//Inserir na fila APTO
 	} else if(n == 1 || n == 7) {
-		return APTO_TO_EXECUTAR;
+		return APTO_TO_EXECUTANDO;
 		//IF filaDeApto == 'vazia'
 			//Retirar um elemento TCB da fila de APTO
 			//Inserir na fila EXECUTANDO
@@ -180,12 +217,12 @@ int handleRemainder(int n) {
 			//Liberar espaço alocado pelo elemento TCB
 		
 	} else if(n == 3 || n == 9) {
-		return EXECUTAR_TO_BLOQUEADO;
+		return EXECUTANDO_TO_BLOQUEADO;
 		//IF filaExecutando != 'vazia'
 			//Retirar o elemento TCB da fila EXECUTANDO
 			//Inserir na fila BLOQUEADO
 	} else if(n == 4 || n == 10) {
-		return EXECUTAR_TO_APTO;
+		return EXECUTANDO_TO_APTO;
 		//IF filaExecutando != 'vazia'
 			//Retirar o elemento TCB da fila EXECUTANDO
 			//Inserir na fila APTO
@@ -194,5 +231,8 @@ int handleRemainder(int n) {
 		//IF filaBloqueado != 'vazia'
 			//Retirar um elemento da fila BLOQUEADO
 			//Inserir na fila de APTO
+	} else {
+		return -1;
 	}
+
 }

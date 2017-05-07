@@ -28,40 +28,20 @@
 
 #include "include/cdata.h"
 #include "include/support.h"
+#include "processador.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-/*int adicionarNaFila(PFILA2* fila, int* tamanho_fila, TCB_t* tcb){
-	
-    if (fila == NULL){
-        fila = malloc(sizeof(TCB_t));
-        tamanho_fila++;
-
-        int inicializar_fila = CreateFila2(fila);
-		
-        if (inicializar_fila == -1){
-            perror("Erro ao inicializar fila!\n");
-			
-			return -1;
-        }
-		
-        return AppendFila2(fila, tcb);
-    }
-    else{
-        fila = realloc(fila, sizeof(TCB_t)*(tamanho_fila+1));
-        tamanho_fila++;
-		
-        return AppendFila2(fila, tcb);
-    }
-}*/
 
 int criarProcesso(PFILA2 aptos, TCB_t* tcb) {
 
 	PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
 	pnodo->node = tcb;
 
-	adicionarNaFilaAptos(aptos, pnodo);
-
+	if (adicionarNaFilaAptos(aptos, pnodo) ){
+		printf( "Erro ao inserir elemento em apto");
+		return 1;
+	}
+	return 0;
 }
 
 TCB_t* criarTCB(int tid) {
@@ -74,12 +54,6 @@ TCB_t* criarTCB(int tid) {
 
 int adicionarNaFila(PFILA2 fila, PNODE2 pnodo) {
 
-	//PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
-	//pnodo->node = tcb;
-
-	/*
-	*	Como um novo processo é colocado na fila de aptos? Isso depende do escalonador 
-	*/
 	return AppendFila2(fila, pnodo);
 }
 
@@ -88,27 +62,67 @@ int adicionarNaFilaAptos(PFILA2 aptos, PNODE2 pnodo) {
 	return adicionarNaFila(aptos, pnodo);
 }
 
-/*int adicionarNaFilaBloqueados(PFILA2* bloqueados, int* tamanho_bloqueados, TCB_t* tcb) {
-	adicionarNaFila(bloqueados, tamanho_bloqueados, tcb);
-	tcb->state = PROCST_BLOQ;
-}
-*/
 int adicionarNaFilaExecutando(PFILA2 executando, PNODE2 pnodo) {
 	((TCB_t*)(pnodo->node))->state = PROCST_EXEC;
 	return adicionarNaFila(executando, pnodo);
 }
 
-int apto_to_executar(PFILA2 apto, PFILA2 executando) {
-	FirstFila2(apto); // iterador no inicio da fila
-	PNODE2 pnodo = GetAtIteratorFila2(apto);
+int apto_to_executando(PFILA2 iterador_apto, PFILA2 iterador_executando) {
+	FirstFila2(iterador_apto); // iterador no inicio da fila
+	PNODE2 pnodo = GetAtIteratorFila2(iterador_apto);
 	
-	if( DeleteAtIteratorFila2(apto) ) {
-		printf("Nao conseguiu retirar elemento da fila de aptos\n");
+	if( DeleteAtIteratorFila2(iterador_apto) ) {
+		printf("Nao conseguiu retirar elemento de apto\n");
 		return 1; // erro
 	}
-	if ( adicionarNaFilaExecutando(executando, pnodo)) {
+	if ( adicionarNaFilaExecutando(iterador_executando, pnodo)) {
 		printf("Erro ao inserir em executando\n");
-		return 1;
+		return 1; // erro
+	}
+	return 0;
+}
+
+int executando_to_bloqueado(PFILA2 iterador_executando, PFILA2 iterador_bloqueado) {
+	FirstFila2(iterador_executando);
+	PNODE2 pnodo = GetAtIteratorFila2(iterador_executando);
+
+	if( DeleteAtIteratorFila2(iterador_executando) ) {
+		printf("Nao conseguiu retirar elemento de executando\n");
+		return 1; // erro
+	}
+	if ( adicionarNaFilaExecutando(iterador_bloqueado, pnodo)) {
+		printf("Erro ao inserir em bloqueado\n");
+		return 1; // erro
+	}
+	return 0;
+}
+
+int executando_to_apto(PFILA2 iterador_executando, PFILA2 iterador_apto) {
+	FirstFila2(iterador_executando);
+	PNODE2 pnodo = GetAtIteratorFila2(iterador_executando);
+
+	if( DeleteAtIteratorFila2(iterador_executando) ) {
+		printf("Nao conseguiu retirar elemento de executando\n");
+		return 1; // erro
+	}
+	if ( adicionarNaFilaExecutando(iterador_apto, pnodo)) {
+		printf("Erro ao inserir em bloqueado\n");
+		return 1; // erro
+	}
+	return 0;
+}
+
+int bloqueado_to_apto(PFILA2 iterador_bloqueado, PFILA2 iterador_apto) {
+	FirstFila2(iterador_bloqueado);
+	PNODE2 pnodo = GetAtIteratorFila2(iterador_bloqueado);
+
+	if( DeleteAtIteratorFila2(iterador_bloqueado) ) {
+		printf("Nao conseguiu retirar elemento de executando\n");
+		return 1; // erro
+	}
+	if ( adicionarNaFilaExecutando(iterador_apto, pnodo)) {
+		printf("Erro ao inserir em bloqueado\n");
+		return 1; // erro
 	}
 	return 0;
 }
@@ -121,3 +135,4 @@ int libera_executando(PFILA2 executando) {
 	}
 	return 0;
 }
+
