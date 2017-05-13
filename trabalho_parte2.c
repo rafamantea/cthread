@@ -13,10 +13,10 @@
 #define ID_TRI 4
 
 
-int calculaPA();
-int calculaPG();
-int calculaFibo();
-int calculaTri();
+void calculaPA();
+void calculaPG();
+void calculaFibo();
+void calculaTri();
 
 int main(){
 	// Declaracao das filas e dos iteradores de filas
@@ -44,6 +44,22 @@ int main(){
 	TCB_t* tcb_tri = (TCB_t*)criarTCB(ID_TRI);
 	
 	//Inicializar contextos!
+	getcontext(&context_pa);
+	getcontext(&context_pg);
+	getcontext(&context_fibo);
+	getcontext(&context_tri);
+	
+	//Setar o uc_link dos contextos
+//	context_pa.uc_link = ...
+//	context_pg.uc_link = ...
+//	context_fibo.uc_link = ...
+//	context_tri.uc_link =  ...
+	
+	makecontext(&context_pa, (void (*)(void))calculaPA, 0);
+	makecontext(&context_pg, (void (*)(void))calculaPG, 0);
+	makecontext(&context_fibo, (void (*)(void))calculaFibo, 0);
+	makecontext(&context_tri, (void (*)(void))calculaTri, 0);
+	
 	
 	//Inserir na fila PA
 	if( criarProcesso(iterador_fila, tcb_pa) ) {
@@ -70,7 +86,7 @@ int main(){
 	return 0;
 }
 
-int calculaPA() {
+void calculaPA() {
 	int i;
 	int result = 1;
 	for(i=0; i < 8; i++) {
@@ -80,11 +96,9 @@ int calculaPA() {
 		// 3. Retornar ao final da fila.
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
-	
-	return result;
 }
 
-int calculaPG() {
+void calculaPG() {
 	int i;
 	int result = 1;
 	for(i=0; i< 10; i++) {
@@ -94,16 +108,14 @@ int calculaPG() {
 		// 3. Retornar ao final da fila.
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
+}
+
+void calculaFibo() {
 	
-	return result;
 }
 
-int calculaFibo() {
-	return 0;
-}
-
-int calculaTri() {
-	return 0;
+void calculaTri() {
+	
 }
 
 }
