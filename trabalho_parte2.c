@@ -21,12 +21,12 @@ void calculaTri();
 
 // Variáveis globais
 
-FILA2 fila;					// insert
+FILA2 fila;			// insert
 PFILA2 iterador_fila;		// insert
 
 int main(){
 	// Declaracao das filas e dos iteradores de filas
-	//FILA2 fila; 			// remove
+	//FILA2 fila; 		// remove
 	//PFILA2 iterador_fila;	//remove
 
 	// Declaração de contextos
@@ -64,31 +64,31 @@ int main(){
 	}	
 	
 	// Criar TCBs
-	TCB_t* tcb_pa = (TCB_t*)criarTCB(ID_PA);
-	TCB_t* tcb_pg = (TCB_t*)criarTCB(ID_PG);
-	TCB_t* tcb_fibo = (TCB_t*)criarTCB(ID_FIBO);
-	TCB_t* tcb_tri = (TCB_t*)criarTCB(ID_TRI);
+	TCB_t* tcb_pa = (TCB_t*)criarTCB(ID_PA, context_pa);
+	TCB_t* tcb_pg = (TCB_t*)criarTCB(ID_PG, context_pg);
+	TCB_t* tcb_fibo = (TCB_t*)criarTCB(ID_FIBO, context_fibo);
+	TCB_t* tcb_tri = (TCB_t*)criarTCB(ID_TRI, context_tri);
 	
 	
 	//Inserir na fila PA
-	if( insertTCB_at_queue(iterador_fila, tcb_pa) ) {	//insert
+	if( insertTCB_at_queue(iterador_fila, tcb_pa) ) {	//change
 		printf("Erro ao inserir PA na fila\n");
 		return 1; // erro
 	}
 	//Inserir na fila PG
-	if( insertTCB_at_queue (iterador_fila, tcb_pg) ) {	//insert
+	if( insertTCB_at_queue (iterador_fila, tcb_pg) ) {	//change
 		printf("Erro ao inserir PG na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila FIBO
-	if( insertTCB_at_queue(iterador_fila, tcb_fibo) ) {	//insert
+	if( insertTCB_at_queue(iterador_fila, tcb_fibo) ) {	//change
 		printf("Erro ao inserir FIBO na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila TRI
-	if( insertTCB_at_queue(iterador_fila, tcb_tri) ) {	//insert
+	if( insertTCB_at_queue(iterador_fila, tcb_tri) ) {	//change
 		printf("Erro ao inserir TRI na fila\n");
 		return 1; // erro
 	}

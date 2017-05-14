@@ -52,12 +52,12 @@ int criarProcesso(PFILA2 aptos, TCB_t* tcb) {
 	return 0;
 }
 
-TCB_t* criarTCB(int tid) {
+TCB_t* criarTCB(int tid, ucontext_t contexto) {
 	TCB_t* tcb = malloc(sizeof(TCB_t));
     tcb->tid = tid;	
     tcb->state = PROCST_CRIACAO;
     // salvar contexto no TCB
-
+    tcb->context = contexto;
 	
 	return tcb;
 }

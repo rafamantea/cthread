@@ -3,7 +3,7 @@
 
 int insertTCB_at_queue(PFILA2 fila, TCB_t* tcb);
 
-TCB_t* criarTCB(int tid);
+TCB_t* criarTCB(int tid, ucontext_t contexto);
 
 int criarProcesso(PFILA2 aptos, TCB_t* tcb);
 
