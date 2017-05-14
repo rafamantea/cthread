@@ -113,6 +113,19 @@ int main(){
 		printf("Erro ao inserir TRI na fila\n");
 		return 1; // erro
 	}
+
+	getcontext(&main_context);
+
+
+
+
+
+
+
+
+
+
+
 	return 0;
 }
 
