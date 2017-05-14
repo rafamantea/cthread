@@ -26,17 +26,10 @@ FILA2 fila;					// insert
 PFILA2 iterador_fila;		// insert
 
 int main(){
-	// Declaracao das filas e dos iteradores de filas
-	//FILA2 fila; 			// remove
-	//PFILA2 iterador_fila;	//remove
 
 	// Declaração de contextos
 	ucontext_t main_context, context_pa, context_pg, context_fibo, context_tri; //insert
-	//ucontext_t *context_pa = malloc(sizeof(ucontext_t));	//remove
-	//ucontext_t *context_pg = malloc(sizeof(ucontext_t));	//remove
-	//ucontext_t *context_fibo = malloc(sizeof(ucontext_t));//remove
-	//ucontext_t *context_tri = malloc(sizeof(ucontext_t));	//remove
-
+	
 	// Pilha para cada contexto
 	char context_pa_stack[SIGSTKSZ];  /* Pilha para o contexto even */
 	char context_pg_stack[SIGSTKSZ];  /* Pilha para o contexto even */
@@ -152,9 +145,7 @@ void calculaPA() {
 		printf("PA termo %d\t: %d\n", i, result);
 		result += 4;		
 		nextcontext();
-		// 3. Retornar ao final da fila.
 	}
-	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
 }
 
 void calculaPG() {
@@ -165,7 +156,6 @@ void calculaPG() {
 		result *= 2;		
 		nextcontext();
 	}
-	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
 }
 
 void calculaFibo() {
@@ -182,14 +172,11 @@ void calculaFibo() {
 }
 
 void calculaTri() {
-	int i, result;
-	int T = 1;
+	int i, result = 1;
 	
 	for(i=1; i <= 6; i++) {
+		result = (i * (i + 1)) / 2;
 		printf("Tri termo %d\t: %d\n", i, result);
-		result = T + (i-1);
-		T = result;
-		
 		nextcontext();
 	}
 }
@@ -214,9 +201,6 @@ void nextcontext(){
 	AppendFila2(iterador_fila, pnodo1);
 
 	LastFila2(iterador_fila);
-	/*PNODE2 recebedor;
-	recebedor = GetAtIteratorFila2(iterador_fila);
-	printf("\n%d\n", ((TCB_t*)(recebedor->node))->tid);*/
 
 	//pegar o novo primeiro
 	FirstFila2(iterador_fila);
