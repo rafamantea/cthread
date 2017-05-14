@@ -30,7 +30,7 @@ int main(){
 	//PFILA2 iterador_fila;	//remove
 
 	// Declaração de contextos
-	ucontext_t context_pa, context_pg, context_fibo, context_tri; //insert
+	ucontext_t main_context, context_pa, context_pg, context_fibo, context_tri; //insert
 	//ucontext_t *context_pa = malloc(sizeof(ucontext_t));	//remove
 	//ucontext_t *context_pg = malloc(sizeof(ucontext_t));	//remove
 	//ucontext_t *context_fibo = malloc(sizeof(ucontext_t));//remove
@@ -48,21 +48,21 @@ int main(){
 	getcontext(&context_fibo);
 	getcontext(&context_tri);
 	
-	//Setar o uc_link dos contextos
+	//Setar o uc_link dos contextos (todos voltam pro main_context)
 	context_pa.uc_link = &main_context;
 	context_pg.uc_link = &main_context;
-	context_fibo.uc_link = &makecontext;
+	context_fibo.uc_link = &main_context;
 	context_tri.uc_link =  &main_context;
 
 	// Setar pilha e tamanho da pilha dos contextos
-	context_pa.us_stack.ss_sp = context_pa_stack;
-	ontext_pa.us_stack.ss_size = sizeof(context_pa_stack);
-	context_pg.us_stack.ss_sp = context_pg_stack;
-	ontext_pg.us_stack.ss_size = sizeof(context_pg_stack);
-	context_fibo.us_stack.ss_sp = context_fibo_stack;
-	ontext_fibo.us_stack.ss_size = sizeof(context_fibo_stack);
-	context_tri.us_stack.ss_sp = context_tri_stack;
-	ontext_tri.us_stack.ss_size = sizeof(context_tri_stack);
+	context_pa.uc_stack.ss_sp = context_pa_stack;
+	context_pa.uc_stack.ss_size = sizeof(context_pa_stack);
+	context_pg.uc_stack.ss_sp = context_pg_stack;
+	context_pg.uc_stack.ss_size = sizeof(context_pg_stack);
+	context_fibo.uc_stack.ss_sp = context_fibo_stack;
+	context_fibo.uc_stack.ss_size = sizeof(context_fibo_stack);
+	context_tri.uc_stack.ss_sp = context_tri_stack;
+	context_tri.uc_stack.ss_size = sizeof(context_tri_stack);
 	
 	// Função a ser executada em cada fluxo de controle
 	makecontext(&context_pa, (void (*)(void))calculaPA, 0);
