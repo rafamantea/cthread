@@ -1,10 +1,10 @@
-#include "include/cdata.h"
-#include "include/support.h"
-#include "processador.h"
-
-// #include <ucontext.h>
 
 #include <stdio.h>
+#include <stdlib.h>
+#include "include/support.h"
+#include "include/cdata.h"
+#include "processador.h"
+#include <ucontext.h>
 
 typedef struct {
 	int peso;
@@ -14,6 +14,7 @@ typedef struct {
 
 int main(){
 
+	ucontext_t contexto;
 	//TCB_t t;
 
 	//t.tid = 1;
@@ -21,53 +22,71 @@ int main(){
 	//printf("%d\n", t.tid);
 
 	// Cria fila do iterador
-	FILA2 fila1_APTO;
-	FILA2 fila1_EXECUTANDO;
+	//FILA2 fila1_APTO;
+	//FILA2 fila1_EXECUTANDO;
+	FILA2 fila;
 
+	//PFILA2 iterador1_APTO;
+	//PFILA2 iterador1_EXECUTANDO;
+	PFILA2 iterador_fila;
 
-	PFILA2 iterador1_APTO;
-	PFILA2 iterador1_EXECUTANDO;
+	//iterador1_APTO = &fila1_APTO;
+	//iterador1_EXECUTANDO = &fila1_EXECUTANDO;
+	iterador_fila = &fila;
 
-	iterador1_APTO = &fila1_APTO;
-	iterador1_EXECUTANDO = &fila1_EXECUTANDO;
-
-	if( CreateFila2( iterador1_APTO ) ) {
+	/*if( CreateFila2( iterador1_APTO ) ) {
 		printf("Erro ao criar sFila2\n");
 		return 0;
 	}
-
 	if( CreateFila2( iterador1_EXECUTANDO ) ) {
 		printf("Erro ao criar sFila2\n");
 		return 0;
+	}*/
+	if( CreateFila2( iterador_fila ) ) {
+		printf("Erro ao criar sFila2\n");
+		return 0;
 	}
 
-	printf("\n\nsFila2s criada com sucesso\n\n");
-
-
 	// criar tcb
-	TCB_t* tcb = criarTCB(456);
+	TCB_t* tcb = criarTCB(1, contexto);
+	insertTCB_at_queue(iterador_fila, tcb);
+	tcb = criarTCB(2, contexto);
+	insertTCB_at_queue(iterador_fila, tcb);
+	tcb = criarTCB(3, contexto);
+	insertTCB_at_queue(iterador_fila, tcb);
+	tcb = criarTCB(4, contexto);
+	insertTCB_at_queue(iterador_fila, tcb);
 
-	NODE2 nodo1;
+	// criar nodo
+	//NODE2 nodo1;
+	//nodo1.node = tcb;
 
-	nodo1.node = tcb;
-
-	printf("%d\n", adicionarNaFilaAptos(iterador1_APTO, &nodo1));
-
+	//printf("%d\n", adicionarNaFilaAptos(iterador1_APTO, &nodo1));
 	// colocar no primeiro elemento
-	FirstFila2(iterador1_APTO);
+	FirstFila2(iterador_fila);
+	
 
-	PNODE2 recebedor;
-	recebedor = GetAtIteratorFila2(iterador1_APTO);
+	PNODE2 nodo_atual;
+	nodo_atual = GetAtIteratorFila2(iterador_fila);	
 
-	printf("%d\n\n", ((TCB_t*)(recebedor->node))->tid);
+	while( nodo_atual != NULL ) {
+		printf("%d\n\n", ((TCB_t*)(nodo_atual->node))->tid);
+		DeleteAtIteratorFila2(iterador_fila);
+		FirstFila2(iterador_fila);
+		nodo_atual = GetAtIteratorFila2(iterador_fila);		
+	}
 
-	apto_to_executar(iterador1_APTO, iterador1_EXECUTANDO);
+	if(NextFila2(iterador_fila) == -1)
+		printf("Fila Vazia!\n");
+	
 
-	FirstFila2(iterador1_EXECUTANDO);
-	recebedor = GetAtIteratorFila2(iterador1_EXECUTANDO);
-	printf("%d\n\n", ((TCB_t*)(recebedor->node))->tid);
+	//apto_to_executar(iterador1_APTO, iterador1_EXECUTANDO);
 
-	libera_executando(iterador1_EXECUTANDO);
+	//FirstFila2(iterador1_EXECUTANDO);
+	//recebedor = GetAtIteratorFila2(iterador1_EXECUTANDO);
+	//printf("%d\n\n", ((TCB_t*)(recebedor->node))->tid);
+
+	//libera_executando(iterador1_EXECUTANDO);
 
 
 

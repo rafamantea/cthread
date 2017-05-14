@@ -10,6 +10,14 @@ objetos:
 executavel:
 	$(CC) -Wall bin/support.o processador.o trabalho_parte2.o
 
+treino: treino1 treino2
+
+treino1:
+	$(CC) -c processador.c teste.c
+
+treino2:
+	$(CC) bin/support.o processador.o teste.o
+
 delete_objetos:
 	rm *.o
 

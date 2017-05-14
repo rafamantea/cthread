@@ -18,6 +18,7 @@ void calculaPA();
 void calculaPG();
 void calculaFibo();
 void calculaTri();
+void proximocontexto();
 
 // Variáveis globais
 
@@ -70,11 +71,6 @@ int main(){
 	makecontext(&context_fibo, (void (*)(void))calculaFibo, 0);
 	makecontext(&context_tri, (void (*)(void))calculaTri, 0);
 
-
-
-
-
-
 	// Atribuir enderecos aos ponteiros
 	iterador_fila = &fila;
 	
@@ -116,26 +112,32 @@ int main(){
 
 	getcontext(&main_context);
 
+	/* Laço que não deixa continuar o fluxo da main até que a fila esteja vazia
+	*/
 
+	if( NextFila2(iterador_fila) != -1) {
 
+		//chama o primeiro nodo da fila
+		FirstFila2(iterador_fila);
+		PNODE2 nodo_atual;
+		nodo_atual = GetAtIteratorFila2(iterador_fila);
 
-
-
-
-
-
-
-
+		// seta para o contexto do TCB no primeiro nodo da fila
+		setcontext( &(((TCB_t*)(nodo_atual->node))->context) );
+		printf("\nIsso nunca pode aparecer na tela\n");
+		return -1; // erro
+	}
+	//termina
 	return 0;
 }
 
 void calculaPA() {
 	int i;
 	int result = 1;
-	for(i=0; i < 8; i++) {
+	for(i=1; i <= 8; i++) {
 		result += 4;
-		// 1. Imprimir valor na tela
-		// 2. Trocar o contexto para o próximo na fila de contextos.
+		printf("PA termo %d : %d\n", i, result);
+		proximocontexto();
 		// 3. Retornar ao final da fila.
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
@@ -144,19 +146,43 @@ void calculaPA() {
 void calculaPG() {
 	int i;
 	int result = 1;
-	for(i=0; i< 10; i++) {
+	for(i=1; i <= 10; i++) {
 		result *= 2;
-		// 1. Imprimir valor na tela
-		// 2. Trocar o contexto para o próximo na fila de contextos.
+		printf("PG termo %d : %d\n", i, result);
+		proximocontexto();
 		// 3. Retornar ao final da fila.
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
 }
 
 void calculaFibo() {
-	
+	int i, result;
+	int f0 = 0;
+	int f1 = 1;
+	for (i=1; i <= 12; i++) {
+		result = f0 + f1;
+		f0 = f1;
+		f1 = result;
+		printf("Fibo termo %d : %d\n", i, result);
+		proximocontexto();
+	}
 }
 
 void calculaTri() {
+	int i, result;
+	int T = 1;
 	
+	for(i=1; i <= 6; i++) {
+		result = T + (i-1);
+		T = result;
+		printf("Tri termo %d : %d\n", i, result);
+		proximocontexto();
+
+	}
 }
+
+
+
+
+
+
