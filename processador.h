@@ -1,6 +1,8 @@
 #include "include/support.h"
 #include "include/cdata.h"
 
+int insertTCB_at_queue(PFILA2 fila, TCB_t* tcb);
+
 TCB_t* criarTCB(int tid);
 
 int criarProcesso(PFILA2 aptos, TCB_t* tcb);

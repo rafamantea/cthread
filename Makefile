@@ -5,10 +5,10 @@ CC=gcc
 all: objetos executavel
 
 objetos:
-	$(CC) -Wall -c processador.c trabalho_parte1.c
+	$(CC) -c processador.c trabalho_parte2.c
 
 executavel:
-	$(CC) -Wall bin/support.o processador.o trabalho_parte1.o
+	$(CC) bin/support.o processador.o trabalho_parte2.o
 
 delete_objetos:
 	rm *.o

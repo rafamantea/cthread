@@ -2,6 +2,7 @@
 * 	Arquivo referente a segunda parte do trabalho.
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include "include/support.h"
 #include "include/cdata.h"
 #include "processador.h"
@@ -18,30 +19,23 @@ void calculaPG();
 void calculaFibo();
 void calculaTri();
 
+// Variáveis globais
+
+FILA2 fila;					// insert
+PFILA2 iterador_fila;		// insert
+
 int main(){
 	// Declaracao das filas e dos iteradores de filas
-	FILA2 fila;
-	PFILA2 iterador_fila;
+	//FILA2 fila; 			// remove
+	//PFILA2 iterador_fila;	//remove
 
 	// Declaração de contextos
-	ucontext_t *context_pa = malloc(sizeof(ucontext_t));
-	ucontext_t *context_pg = malloc(sizeof(ucontext_t));
-	ucontext_t *context_fibo = malloc(sizeof(ucontext_t));
-	ucontext_t *context_tri = malloc(sizeof(ucontext_t));
-	
-	// Atribuir enderecos aos ponteiros
-	iterador_fila = &fila;
-	
-	// Criar a fila
-	if( CreateFila2( iterador_fila ) ) {
-		printf("Erro ao criar sFila2 apto\n");
-		return 0;
-	}
-	
-	TCB_t* tcb_pa = (TCB_t*)criarTCB(ID_PA);
-	TCB_t* tcb_pg = (TCB_t*)criarTCB(ID_PG);
-	TCB_t* tcb_fibo = (TCB_t*)criarTCB(ID_FIBO);
-	TCB_t* tcb_tri = (TCB_t*)criarTCB(ID_TRI);
+	ucontext_t context_pa, context_pg, context_fibo, context_tri; //insert
+
+	//ucontext_t *context_pa = malloc(sizeof(ucontext_t));	//remove
+	//ucontext_t *context_pg = malloc(sizeof(ucontext_t));	//remove
+	//ucontext_t *context_fibo = malloc(sizeof(ucontext_t));//remove
+	//ucontext_t *context_tri = malloc(sizeof(ucontext_t));	//remove
 	
 	//Inicializar contextos!
 	getcontext(&context_pa);
@@ -59,27 +53,42 @@ int main(){
 	makecontext(&context_pg, (void (*)(void))calculaPG, 0);
 	makecontext(&context_fibo, (void (*)(void))calculaFibo, 0);
 	makecontext(&context_tri, (void (*)(void))calculaTri, 0);
+
+	// Atribuir enderecos aos ponteiros
+	iterador_fila = &fila;
+	
+	// Criar a fila
+	if( CreateFila2( iterador_fila ) ) {
+		printf("Erro ao criar sFila2 apto\n");
+		return 0;
+	}	
+	
+	// Criar TCBs
+	TCB_t* tcb_pa = (TCB_t*)criarTCB(ID_PA);
+	TCB_t* tcb_pg = (TCB_t*)criarTCB(ID_PG);
+	TCB_t* tcb_fibo = (TCB_t*)criarTCB(ID_FIBO);
+	TCB_t* tcb_tri = (TCB_t*)criarTCB(ID_TRI);
 	
 	
 	//Inserir na fila PA
-	if( criarProcesso(iterador_fila, tcb_pa) ) {
+	if( insertTCB_at_queue(iterador_fila, tcb_pa) ) {	//insert
 		printf("Erro ao inserir PA na fila\n");
 		return 1; // erro
 	}
 	//Inserir na fila PG
-	if( criarProcesso(iterador_fila, tcb_pg) ) {
+	if( insertTCB_at_queue (iterador_fila, tcb_pg) ) {	//insert
 		printf("Erro ao inserir PG na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila FIBO
-	if( criarProcesso(iterador_fila, tcb_fibo) ) {
+	if( insertTCB_at_queue(iterador_fila, tcb_fibo) ) {	//insert
 		printf("Erro ao inserir FIBO na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila TRI
-	if( criarProcesso(iterador_fila, tcb_tri) ) {
+	if( insertTCB_at_queue(iterador_fila, tcb_tri) ) {	//insert
 		printf("Erro ao inserir TRI na fila\n");
 		return 1; // erro
 	}
@@ -116,6 +125,4 @@ void calculaFibo() {
 
 void calculaTri() {
 	
-}
-
 }

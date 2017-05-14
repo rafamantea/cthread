@@ -27,6 +27,18 @@
 #include "processador.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ucontext.h>
+
+int insertTCB_at_queue(PFILA2 fila, TCB_t* tcb) {
+	PNODE2 pnodo = malloc(sizeof(NODE2));	// alocar espaço para um novo nodo na fila
+	pnodo->node = tcb;
+
+	if ( AppendFila2(fila, pnodo) ){
+		printf( "Erro ao inserir TCB na fila");
+		return 1;
+	}
+	return 0;
+}
 
 int criarProcesso(PFILA2 aptos, TCB_t* tcb) {
 
@@ -44,6 +56,8 @@ TCB_t* criarTCB(int tid) {
 	TCB_t* tcb = malloc(sizeof(TCB_t));
     tcb->tid = tid;	
     tcb->state = PROCST_CRIACAO;
+    // salvar contexto no TCB
+
 	
 	return tcb;
 }
