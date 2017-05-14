@@ -18,7 +18,7 @@ void calculaPA();
 void calculaPG();
 void calculaFibo();
 void calculaTri();
-void proximocontexto();
+void nextcontext();
 
 // Variáveis globais
 
@@ -110,12 +110,23 @@ int main(){
 		return 1; // erro
 	}
 
+	int returned = 0;
 	getcontext(&main_context);
 
 	/* Laço que não deixa continuar o fluxo da main até que a fila esteja vazia
 	*/
 
 	if( NextFila2(iterador_fila) != -1) {
+
+		if (returned == 1) { 	// se alguma funcao terminou, remover da fila
+			FirstFila2(iterador_fila);
+			DeleteAtIteratorFila2(iterador_fila);
+		}
+		returned = 1;
+		if( NextFila2(iterador_fila) == -1 ){
+			printf("\nTerminando a main\n");
+			return 0; //fim
+		}
 
 		//chama o primeiro nodo da fila
 		FirstFila2(iterador_fila);
@@ -127,6 +138,9 @@ int main(){
 		printf("\nIsso nunca pode aparecer na tela\n");
 		return -1; // erro
 	}
+
+	printf("\nTerminando a main\n");
+
 	//termina
 	return 0;
 }
@@ -135,9 +149,9 @@ void calculaPA() {
 	int i;
 	int result = 1;
 	for(i=1; i <= 8; i++) {
-		result += 4;
-		printf("PA termo %d : %d\n", i, result);
-		proximocontexto();
+		printf("PA termo %d\t: %d\n", i, result);
+		result += 4;		
+		nextcontext();
 		// 3. Retornar ao final da fila.
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
@@ -147,24 +161,23 @@ void calculaPG() {
 	int i;
 	int result = 1;
 	for(i=1; i <= 10; i++) {
-		result *= 2;
-		printf("PG termo %d : %d\n", i, result);
-		proximocontexto();
-		// 3. Retornar ao final da fila.
+		printf("PG termo %d\t: %d\n", i, result);
+		result *= 2;		
+		nextcontext();
 	}
 	// 4. (Saiu do laço) Não volta mais para o fim da fila, e libera a estrutura TCB
 }
 
 void calculaFibo() {
-	int i, result;
+	int i, result = 1;
 	int f0 = 0;
 	int f1 = 1;
 	for (i=1; i <= 12; i++) {
+		printf("Fibo termo %d\t: %d\n", i, result);
 		result = f0 + f1;
 		f0 = f1;
 		f1 = result;
-		printf("Fibo termo %d : %d\n", i, result);
-		proximocontexto();
+		nextcontext();
 	}
 }
 
@@ -173,14 +186,45 @@ void calculaTri() {
 	int T = 1;
 	
 	for(i=1; i <= 6; i++) {
+		printf("Tri termo %d\t: %d\n", i, result);
 		result = T + (i-1);
 		T = result;
-		printf("Tri termo %d : %d\n", i, result);
-		proximocontexto();
-
+		
+		nextcontext();
 	}
 }
 
+void nextcontext(){
+	PNODE2 pnodo1, pnodo2;
+	FirstFila2(iterador_fila);
+	pnodo1 = GetAtIteratorFila2(iterador_fila);
+	//se tiver só uma thread na fila
+	if( NextFila2(iterador_fila) == -3 ){
+		//volta pro mesmo contexto
+		setcontext(&(((TCB_t*)(pnodo1->node))->context));
+	}
+
+	//pegar primeiro nodo da fila
+	FirstFila2(iterador_fila);
+	
+	//deletar o primeiro da fila
+	DeleteAtIteratorFila2(iterador_fila);
+
+	//coloca no fim da fila
+	AppendFila2(iterador_fila, pnodo1);
+
+	LastFila2(iterador_fila);
+	/*PNODE2 recebedor;
+	recebedor = GetAtIteratorFila2(iterador_fila);
+	printf("\n%d\n", ((TCB_t*)(recebedor->node))->tid);*/
+
+	//pegar o novo primeiro
+	FirstFila2(iterador_fila);
+	pnodo2 = GetAtIteratorFila2(iterador_fila);
+
+	//trocar contexto
+	swapcontext( &(((TCB_t*)(pnodo1->node))->context), &(((TCB_t*)(pnodo2->node))->context) );
+}
 
 
 

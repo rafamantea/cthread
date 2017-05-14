@@ -66,18 +66,23 @@ int main(){
 	FirstFila2(iterador_fila);
 	
 
-	PNODE2 nodo_atual;
-	nodo_atual = GetAtIteratorFila2(iterador_fila);	
+	//PNODE2 nodo_atual;
+	//nodo_atual = GetAtIteratorFila2(iterador_fila);	
 
-	while( nodo_atual != NULL ) {
+	/*while( nodo_atual != NULL ) {
 		printf("%d\n\n", ((TCB_t*)(nodo_atual->node))->tid);
 		DeleteAtIteratorFila2(iterador_fila);
 		FirstFila2(iterador_fila);
 		nodo_atual = GetAtIteratorFila2(iterador_fila);		
-	}
+	}*/
+	NextFila2(iterador_fila);
+	NextFila2(iterador_fila);
+	NextFila2(iterador_fila);
+	//NextFila2(iterador_fila);
 
-	if(NextFila2(iterador_fila) == -1)
-		printf("Fila Vazia!\n");
+
+	if(NextFila2(iterador_fila) == -3)
+		printf("Fim da fila!\n");
 	
 
 	//apto_to_executar(iterador1_APTO, iterador1_EXECUTANDO);
