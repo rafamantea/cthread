@@ -21,21 +21,26 @@ void calculaTri();
 
 // Variáveis globais
 
-FILA2 fila;			// insert
+FILA2 fila;					// insert
 PFILA2 iterador_fila;		// insert
 
 int main(){
 	// Declaracao das filas e dos iteradores de filas
-	//FILA2 fila; 		// remove
+	//FILA2 fila; 			// remove
 	//PFILA2 iterador_fila;	//remove
 
 	// Declaração de contextos
 	ucontext_t context_pa, context_pg, context_fibo, context_tri; //insert
-
 	//ucontext_t *context_pa = malloc(sizeof(ucontext_t));	//remove
 	//ucontext_t *context_pg = malloc(sizeof(ucontext_t));	//remove
 	//ucontext_t *context_fibo = malloc(sizeof(ucontext_t));//remove
 	//ucontext_t *context_tri = malloc(sizeof(ucontext_t));	//remove
+
+	// Pilha para cada contexto
+	char context_pa_stack[SIGSTKSZ];  /* Pilha para o contexto even */
+	char context_pg_stack[SIGSTKSZ];  /* Pilha para o contexto even */
+	char context_fibo_stack[SIGSTKSZ];  /* Pilha para o contexto even */
+	char context_tri_stack[SIGSTKSZ];  /* Pilha para o contexto even */	
 	
 	//Inicializar contextos!
 	getcontext(&context_pa);
@@ -44,15 +49,31 @@ int main(){
 	getcontext(&context_tri);
 	
 	//Setar o uc_link dos contextos
-//	context_pa.uc_link = ...
-//	context_pg.uc_link = ...
-//	context_fibo.uc_link = ...
-//	context_tri.uc_link =  ...
+	context_pa.uc_link = &main_context;
+	context_pg.uc_link = &main_context;
+	context_fibo.uc_link = &makecontext;
+	context_tri.uc_link =  &main_context;
+
+	// Setar pilha e tamanho da pilha dos contextos
+	context_pa.us_stack.ss_sp = context_pa_stack;
+	ontext_pa.us_stack.ss_size = sizeof(context_pa_stack);
+	context_pg.us_stack.ss_sp = context_pg_stack;
+	ontext_pg.us_stack.ss_size = sizeof(context_pg_stack);
+	context_fibo.us_stack.ss_sp = context_fibo_stack;
+	ontext_fibo.us_stack.ss_size = sizeof(context_fibo_stack);
+	context_tri.us_stack.ss_sp = context_tri_stack;
+	ontext_tri.us_stack.ss_size = sizeof(context_tri_stack);
 	
+	// Função a ser executada em cada fluxo de controle
 	makecontext(&context_pa, (void (*)(void))calculaPA, 0);
 	makecontext(&context_pg, (void (*)(void))calculaPG, 0);
 	makecontext(&context_fibo, (void (*)(void))calculaFibo, 0);
 	makecontext(&context_tri, (void (*)(void))calculaTri, 0);
+
+
+
+
+
 
 	// Atribuir enderecos aos ponteiros
 	iterador_fila = &fila;
@@ -71,24 +92,24 @@ int main(){
 	
 	
 	//Inserir na fila PA
-	if( insertTCB_at_queue(iterador_fila, tcb_pa) ) {	//change
+	if( insertTCB_at_queue(iterador_fila, tcb_pa) ) {	//insert
 		printf("Erro ao inserir PA na fila\n");
 		return 1; // erro
 	}
 	//Inserir na fila PG
-	if( insertTCB_at_queue (iterador_fila, tcb_pg) ) {	//change
+	if( insertTCB_at_queue (iterador_fila, tcb_pg) ) {	//insert
 		printf("Erro ao inserir PG na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila FIBO
-	if( insertTCB_at_queue(iterador_fila, tcb_fibo) ) {	//change
+	if( insertTCB_at_queue(iterador_fila, tcb_fibo) ) {	//insert
 		printf("Erro ao inserir FIBO na fila\n");
 		return 1; // erro
 	}
 	
 	//Inserir na fila TRI
-	if( insertTCB_at_queue(iterador_fila, tcb_tri) ) {	//change
+	if( insertTCB_at_queue(iterador_fila, tcb_tri) ) {	//insert
 		printf("Erro ao inserir TRI na fila\n");
 		return 1; // erro
 	}
