@@ -118,11 +118,8 @@ int ccreate (void *(*start)(void *), void *arg, int prio) {
     context->uc_stack.ss_sp = stack;
     context->uc_stack.ss_size = SIGSTKSZ;
 
-    TCB_t *tcb = malloc(sizeof(TCB_t));
-    tcb->tid = ++tid_count;
-    tcb->state = PROCST_CRIACAO;
-    tcb->ticket = prio;
-    tcb->context = *context;
+    TCB_t *tcb = (TCB_t*)criarTCB(++tid_count, context);
+	tcb->prio = prio;
 
     makecontext(&tcb->context, (void (*)(void)) start, 1, arg);
 	
