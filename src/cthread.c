@@ -94,11 +94,10 @@ void init_main_thread_context() {
 }
 
 void init_final_context() {
-	getcontext(&final_context);
     char stack[SIGSTKSZ];
+	getcontext(&final_context);
     final_context.uc_stack.ss_sp = stack;
     final_context.uc_stack.ss_size = sizeof(stack);
-
     makecontext(&final_context, (void (*)(void))finish_callback, 0);
 }
 
@@ -110,8 +109,8 @@ void init_final_context() {
 */
 
 int ccreate (void *(*start)(void *), void *arg, int prio) {
-    ucontext_t *context = malloc(sizeof(ucontext_t));
     char *stack = malloc(sizeof(char) * SIGSTKSZ);
+    ucontext_t *context = malloc(sizeof(ucontext_t));
     getcontext(context);
 
     context->uc_link = &final_context;
@@ -119,10 +118,9 @@ int ccreate (void *(*start)(void *), void *arg, int prio) {
     context->uc_stack.ss_size = SIGSTKSZ;
 
     TCB_t *tcb = (TCB_t*)criarTCB(++tid_count, context);
-	tcb->prio = prio;
+	tcb->ticket = prio;
 
     makecontext(&tcb->context, (void (*)(void)) start, 1, arg);
-	
 	add_ready_by_priority(tcb, prio);
 
     return tcb->tid;
