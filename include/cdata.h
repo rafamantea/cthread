@@ -16,7 +16,7 @@
 #define	PROCST_TERMINO	4
 
 /* NÃO ALTERAR ESSA struct */
-typedef struct s_TCB {
+typedef struct s_TCB { 
 	int		tid; 		// identificador da thread
 	int		state;		// estado em que a thread se encontra
 					// 0: Criação; 1: Apto; 2: Execução; 3: Bloqueado e 4: Término
