@@ -43,14 +43,14 @@ u_context *final_context;
 */
 
 void initialize() {
-	init_lines();
+	init_queues();
 	init_final_context();
 	init_current_thread_context();
 	init_main_thread_context();
 	
 }
 
-int init_lines() {
+int init_queues() {
 	it_ready_very_high = &ready_very_high;
 	it_ready_high = &ready_high;
 	it_ready_medium = &ready_medium;
@@ -160,7 +160,6 @@ int cidentify (char *name, int size){
     }
 
     if(size <= 0){
-        perror("[ERROR] [cidentify] tamanho negativo\n");
         return -1;
     }
 
@@ -196,6 +195,70 @@ int add_ready_by_priority(int prio, TCB_t* tcb) {
 		default:
 			return 1;
 	}
+}
+
+int queue_has_tcb(PFILA2 queue, int tid){
+    TCB_t* tcb;
+
+    if (queue == NULL){
+        return 1;
+    }
+    if(FirstFila2(queue) == 0){
+
+        tcb = (TCB_t*)GetAtIteratorFila2(queue);
+        while(tcb != NULL && tcb->tid != tid){
+            if(NextFila2(queue) == 0){
+                tcb = (TCB_t*)GetAtIteratorFila2(queue);
+                if (tcb == NULL){
+                    return 1;
+                }
+            }
+            else{
+                return 1;
+            }
+        }
+        if (tcb->tid == tid){
+            return 0;
+        }
+    }
+    return 1;
+}
+
+TCB_t * get_tcb(PFILA2 queue, int tid) {
+	TCB_t* tcb;
+
+	if(FirstFila2(queue) == 0){
+		tcb = (TCB_t*)GetAtIteratorFila2(queue);
+		while(tcb != NULL && tcb->tid != tid){
+			if(NextFila2(queue) == 0){
+				tcb = (TCB_t*)GetAtIteratorFila2(queue);
+			}
+		}
+		if (tcb->tid == tid){
+			return tcb;
+		}
+	}
+	return NULL;
+}
+
+TCB_t * get_tcb_by_tid(int tid) {
+	if(queue_has_tcb(ready_very_high, tid) {
+		return get_tcb(ready_very_high, tid);
+	
+	} else if(queue_has_tcb(ready_high, tid)) {
+		return get_tcb(ready_high, tid);
+		
+	} else if(queue_has_tcb(ready_medium, tid)) {
+		return get_tcb(ready_medium, tid);
+		
+	} else if(queue_has_tcb(ready_low, tid)) {
+		return get_tcb(ready_low, tid);
+		
+	} else if(queue_has_tcb(blocked, tid)) {
+		return get_tcb(blocked, tid);
+	}
+	
+	return NULL;
 }
 
 void finish_callback() {
