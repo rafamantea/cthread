@@ -158,7 +158,19 @@ int cwait (csem_t *sem) {
 }
 
 int csignal (csem_t *sem) {
-	
+    sem->count++;
+
+    if(sem->count <= 0){ 
+        if (FirstFila2(sem->fila) == 0){
+            TCB_t* thread = malloc(sizeof(TCB_t));
+            thread = (TCB_t*)GetAtIteratorFila2(sem->fila);
+
+            DeleteAtIteratorFila2(sem->fila);
+            blocked_to_ready(thread->tid);
+        }
+    }
+
+    return 0;
 }
 
 int cidentify (char *name, int size){
@@ -202,6 +214,35 @@ int add_ready_by_priority(int prio, TCB_t* tcb) {
 		default:
 			return 1;
 	}
+}
+
+int add_ready_by_priority(TCB_t* tcb) {
+	return add_ready_by_priority(tcb->ticket, tcb);
+}
+
+int blocked_to_ready(int tid) {
+    TCB_t* tcb;
+    TCB_t* tcb_aux = (TCB_t*) malloc(sizeof(TCB_t));
+
+    if (FirstFila2(blocked) == 0){
+        tcb = (TCB_t*) GetAtIteratorFila2(blocked);
+        while(tcb != NULL){
+            if(tcb->tid == tid){
+                *tcb_aux = *tcb;
+                if (DeleteAtIteratorFila2(blocked) == 0){
+                    tcb_aux->state = PROCST_APTO;
+                    add_ready_by_priority(tcb_aux);
+                    return 0;
+                }
+                else{
+                    return -1;
+                }
+            }
+            NextFila2(blocked);
+            tcb = (TCB_t*) GetAtIteratorFila2(blocked);
+        }
+    }
+    return -1;	
 }
 
 int queue_has_tcb(PFILA2 queue, int tid){
